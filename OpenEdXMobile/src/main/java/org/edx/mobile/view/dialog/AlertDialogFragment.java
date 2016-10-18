@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
@@ -19,7 +20,9 @@ import org.edx.mobile.R;
 
 public class AlertDialogFragment extends DialogFragment {
     protected static final String ARG_TITLE = "title";
+    protected static final String ARG_TITLE_RES = "titleRes";
     protected static final String ARG_MESSAGE = "message";
+    protected static final String ARG_MESSAGE_RES = "messageRes";
 
     public interface ButtonAttributes {
         @NonNull
@@ -27,6 +30,16 @@ public class AlertDialogFragment extends DialogFragment {
 
         @Nullable
         DialogInterface.OnClickListener getOnClickListener();
+    }
+
+    public static AlertDialogFragment newInstance(@StringRes int titleResId, @StringRes int messageResId, @Nullable DialogInterface.OnClickListener onPositiveClick) {
+        AlertDialogFragment fragment = new AlertDialogFragment();
+        fragment.mOnPositiveClick = onPositiveClick;
+        Bundle args = new Bundle();
+        args.putInt(ARG_TITLE_RES, titleResId);
+        args.putInt(ARG_MESSAGE_RES, messageResId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     public static AlertDialogFragment newInstance(@Nullable String title, @NonNull String message, @Nullable DialogInterface.OnClickListener onPositiveClick) {
@@ -45,8 +58,15 @@ public class AlertDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String title = getArguments().getString(ARG_TITLE);
-        String message = getArguments().getString(ARG_MESSAGE);
+        Bundle args = getArguments();
+        CharSequence title = getText(args.getInt(ARG_TITLE_RES));
+        if (title == null) {
+            title = args.getString(ARG_TITLE);
+        }
+        CharSequence message = getText(args.getInt(ARG_MESSAGE_RES));
+        if (message == null) {
+            message = getArguments().getString(ARG_MESSAGE);
+        }
 
         ButtonAttributes positiveButtonAttributes = getPositiveButtonAttributes();
         ButtonAttributes negativeButtonAttributes = getNegativeButtonAttributes();
