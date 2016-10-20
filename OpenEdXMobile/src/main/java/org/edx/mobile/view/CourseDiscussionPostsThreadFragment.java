@@ -269,6 +269,8 @@ public class CourseDiscussionPostsThreadFragment extends CourseDiscussionPostsBa
         for (int i = 0; i < discussionPostsAdapter.getCount(); ++i) {
             final DiscussionThread discussionThread = discussionPostsAdapter.getItem(i);
             if (discussionThread.containsComment(event.getComment())) {
+                // No need to update the discussionThread object because its already updated on
+                // the responses screen and is shared on both screens.
                 discussionPostsAdapter.notifyDataSetChanged();
                 break;
             }
